@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -53,20 +53,6 @@ type VideoResponseMetaData = {
   title: string;
 };
 
-export const enviornment_prod =
-  process.env.Enviornment === "production" ? true : false;
-
-export const enviornment_dev = !enviornment_prod;
-
-const baseURL = enviornment_prod ? "" : "http://192.168.196.14:3000";
-
-axios.defaults.baseURL = baseURL;
-
-const handleError = (err: any) => {
-  alert("Some error");
-  if (enviornment_dev) console.log(err);
-};
-
 // function filterAndSortUniqueQualityLabel(filteredData: VideoMetadata[]) {
 //   // Custom sorting function
 //   const resolutionOrder: { [key: string]: number } = {
@@ -99,6 +85,19 @@ const handleError = (err: any) => {
 //   return filteredData;
 // }
 
+const enviornment_prod =
+  process.env.NEXT_PUBLIC_Enviornment === "production" ? true : false;
+
+const enviornment_dev = !enviornment_prod;
+
+const baseURL = enviornment_prod ? "" : "http://192.168.196.14:3000";
+axios.defaults.baseURL = baseURL;
+
+const handleError = (err: any) => {
+  alert("Some error");
+  if (enviornment_dev) console.log(err);
+};
+
 const Home: React.FC = () => {
   const [videoLink, setVideoLink] = useState<string>("");
   const [availableQualities, setAvailableQualities] = useState<
@@ -112,46 +111,46 @@ const Home: React.FC = () => {
   const [showModal, setModal] = useState(false);
   const [videoTitle, setVideoTitle] = useState("");
 
-  const handleQualityDownload = async (quality: string, index: number) => {
-    handlShowModal();
+  // const handleQualityDownload = async (quality: string, index: number) => {
+  //   handlShowModal();
 
-    // setQualityLoading((prev) => {
-    //   const updatedLoading = [...prev];
-    //   updatedLoading[index] = true;
-    //   return updatedLoading;
-    // });
+  //   // setQualityLoading((prev) => {
+  //   //   const updatedLoading = [...prev];
+  //   //   updatedLoading[index] = true;
+  //   //   return updatedLoading;
+  //   // });
 
-    setQualityLoading(true);
+  //   setQualityLoading(true);
 
-    if (availableQualities?.[quality]?.["data"]?.["audioBitrate"] > 0) {
-      setDownloadUrl(availableQualities?.[quality]?.["data"]?.["url"]);
-    } else
-      try {
-        const response = await axios.post("download", {
-          videoUrl: videoLink,
-          itag: availableQualities?.[quality]?.["data"]?.["itag"],
-          hasAudio:
-            availableQualities?.[quality]?.["data"]?.["audioBitrate"] > 0
-              ? true
-              : false,
-        });
+  //   if (availableQualities?.[quality]?.["data"]?.["audioBitrate"] > 0) {
+  //     setDownloadUrl(availableQualities?.[quality]?.["data"]?.["url"]);
+  //   } else
+  //     try {
+  //       const response = await axios.post("download", {
+  //         videoUrl: videoLink,
+  //         itag: availableQualities?.[quality]?.["data"]?.["itag"],
+  //         hasAudio:
+  //           availableQualities?.[quality]?.["data"]?.["audioBitrate"] > 0
+  //             ? true
+  //             : false,
+  //       });
 
-        setDownloadUrl(window.URL.createObjectURL(new Blob([response.data])));
+  //       setDownloadUrl(window.URL.createObjectURL(new Blob([response.data])));
 
-        if (enviornment_dev) console.log(response.data);
-      } catch (error) {
-        handleError(error);
-      }
+  //       if (enviornment_dev) console.log(response.data);
+  //     } catch (error) {
+  //       handleError(error);
+  //     }
 
-    // Replace this with your download completion logic
-    // setQualityLoading((prev) => {
-    //   const updatedLoading = [...prev];
-    //   updatedLoading[index] = false;
-    //   return updatedLoading;
-    // });
+  //   // Replace this with your download completion logic
+  //   // setQualityLoading((prev) => {
+  //   //   const updatedLoading = [...prev];
+  //   //   updatedLoading[index] = false;
+  //   //   return updatedLoading;
+  //   // });
 
-    setQualityLoading(false);
-  };
+  //   setQualityLoading(false);
+  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
